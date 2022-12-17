@@ -20,6 +20,7 @@ public class InfoController {
     @GetMapping("/info")
     public ResponseEntity info() {
         Map<String, String> data = new HashMap<>();
+        data.put("application-name", "AM Registry Backend");
         data.put("application-version", this.applicationVersion);
         return ResponseEntity.ok().body(data);
     }

@@ -25,6 +25,7 @@
 		<module>registry-persistence</module>
 		<module>registry-model</module>
 		<module>registry-business</module>
+		<module>registry-frontend</module>
 	</modules>
 
 	<dependencyManagement>

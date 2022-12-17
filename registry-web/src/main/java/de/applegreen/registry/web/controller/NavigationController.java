@@ -11,6 +11,6 @@ public class NavigationController {
 
     @GetMapping("/")
     public String main() {
-        return "index";
+        return "index.html";
     }
 }

@@ -1,0 +1,9 @@
+spring:
+  groovy:
+    template:
+      check-template-location: false # we dont need templating
+
+server:
+  port: 8081
+
+application-version: @revision@

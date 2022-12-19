@@ -5,6 +5,9 @@ target/
 !**/src/test/**/target/
 **/.flattened-pom.xml
 .mvn
+registry-frontend/node
+registry-frontend/node_modules
+registry-web/src/main/resources/public/
 
 ### STS ###
 .apt_generated

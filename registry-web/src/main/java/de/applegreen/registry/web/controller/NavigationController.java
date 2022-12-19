@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * @author Alexander Tepe | a.tepe@kalverkamp.de
+ * @author Alexander Tepe | alexander.tepe@hotmail.de
  */
 @Controller
 public class NavigationController {

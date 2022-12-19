@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Alexander Tepe | a.tepe@kalverkamp.de
+ * @author Alexander Tepe | alexander.tepe@hotmail.de
  */
 @Controller
 public class InfoController {

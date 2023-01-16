@@ -1,5 +1,8 @@
 <template>
-  <h1>Hallo Welt</h1>
+    <div class="Main">
+        <h2>This Site is under construction</h2>
+    </div>
+
 </template>
 
 <script>
@@ -8,6 +11,9 @@
     }
 </script>
 
-<style>
-
+<style scoped>
+    .Main {
+        margin-top: 200px;
+        text-align: center;
+    }
 </style>

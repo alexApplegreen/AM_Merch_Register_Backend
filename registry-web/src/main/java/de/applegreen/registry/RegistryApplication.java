@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * @author Alexander Tepe | a.tepe@kalverkamp.de
+ * @author Alexander Tepe | alexander.tepe@hotmail.de
  */
 @SpringBootApplication
 public class RegistryApplication {

@@ -10,7 +10,6 @@
         <version>${revision}</version>
     </parent>
 
-    <groupId>de.applegreen</groupId>
     <artifactId>registry-web</artifactId>
     <version>${revision}</version>
     <packaging>jar</packaging>
@@ -45,17 +44,6 @@
         </resources>
         <finalName>${project.artifactId}</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>${maven-resources-plugin.version}</version>
-                <configuration>
-                    <delimiters>
-                        <delimiter>@</delimiter>
-                    </delimiters>
-                    <useDefaultDelimiters>false</useDefaultDelimiters>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

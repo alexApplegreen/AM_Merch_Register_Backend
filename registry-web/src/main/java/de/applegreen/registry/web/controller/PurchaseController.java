@@ -84,8 +84,8 @@ public class PurchaseController implements HasLogger {
      * Method to register a new purchase
      * This will also trigger a sync with the woocommerce Instance
      *
-     * @param purchaseDTO
-     * @return
+     * @param purchaseDTO the Purchase
+     * @return 200 if entity was saved
      */
     @SuppressWarnings("rawtypes")
     @PostMapping("/new")

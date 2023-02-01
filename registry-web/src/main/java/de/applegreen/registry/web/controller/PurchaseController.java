@@ -2,6 +2,7 @@ package de.applegreen.registry.web.controller;
 
 import de.applegreen.registry.business.datatransfer.PurchaseDTO;
 import de.applegreen.registry.business.datatransfer.PurchaseHistoryPaginationDTO;
+import de.applegreen.registry.business.util.AdviceAnnotations;
 import de.applegreen.registry.business.util.HasLogger;
 import de.applegreen.registry.model.ProductEntity;
 import de.applegreen.registry.model.PurchaseEntity;
@@ -89,6 +90,7 @@ public class PurchaseController implements HasLogger {
      */
     @SuppressWarnings("rawtypes")
     @PostMapping("/new")
+    @AdviceAnnotations.PurchaseCommit
     public ResponseEntity newPurchase(@Valid @RequestBody PurchaseDTO purchaseDTO) {
         PurchaseEntity purchaseEntity = this.modelMapper.map(purchaseDTO, PurchaseEntity.class);
         Set<ProductEntity> transientProducts = new HashSet<>();

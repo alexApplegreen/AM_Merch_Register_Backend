@@ -8,6 +8,7 @@ target/
 registry-frontend/node
 registry-frontend/node_modules
 registry-web/src/main/resources/public/
+registry-web/src/main/resources/application-developer.yaml
 
 ### STS ###
 .apt_generated

@@ -3,6 +3,15 @@ spring:
     template:
       check-template-location: false # we dont need templating
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/machine
+    username: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false # OSIV Anti-Pattern
+
 server:
   port: 8081
 

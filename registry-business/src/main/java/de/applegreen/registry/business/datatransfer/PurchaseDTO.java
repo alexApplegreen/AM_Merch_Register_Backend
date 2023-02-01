@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author Alexander Tepe | a.tepe@hotmail.de
@@ -20,6 +20,16 @@ import java.util.List;
 @NoArgsConstructor
 public class PurchaseDTO {
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class ProductDTO {
+
+        private String product_description;
+        private BigDecimal cost;
+        private Integer amount;
+    }
+
     @NotNull
     private Timestamp timestamp;
     @NotNull
@@ -27,5 +37,5 @@ public class PurchaseDTO {
     private BigDecimal total_cost;
     @NotEmpty(message = "At least one product must have been sold")
     @NotNull
-    private List<Integer> product_ids;
+    private Set<ProductDTO> sold_products;
 }

@@ -70,7 +70,7 @@ public class PurchaseController implements HasLogger {
             return ResponseEntity.noContent().build();
         }
         Map<Timestamp, Object> responseData = new HashMap<>();
-        List<PurchaseEntity> purchaseEntityList = purchaseHistoryPage.toList();
+        List<PurchaseEntity> purchaseEntityList = purchaseHistoryPage.getContent();
         purchaseEntityList.forEach((purchase) -> {
             Map<String, Object> subMap = new HashMap<>();
             subMap.put("total cost", purchase.getTotal_cost());

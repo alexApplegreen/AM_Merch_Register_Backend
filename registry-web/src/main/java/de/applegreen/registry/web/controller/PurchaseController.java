@@ -15,6 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -103,5 +107,38 @@ public class PurchaseController implements HasLogger {
         this.purchaseEntityRepository.save(purchaseEntity);
         this.getLogger().info("New Purchase about " + purchaseDTO.getTotal_cost().toString() + "€");
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Method to get Detail of single Purchase
+     *
+     * @param purchase_id Long id of the purchase inside the Database
+     * @return 200 and instance of purchase if ID exists, 404 else
+     */
+    @GetMapping("/details/{purchase_id}")
+    public ResponseEntity details(@PathVariable("purchase_id") Long purchase_id) {
+        Optional<PurchaseEntity> purchaseEntityOptional = this.purchaseEntityRepository.findById(purchase_id);
+        try {
+            PurchaseEntity purchase = purchaseEntityOptional.orElseThrow();
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("id", purchase.getId());
+            responseData.put("timestamp", purchase.getTimestamp());
+            responseData.put("total cost", purchase.getTotal_cost());
+            responseData.put("sold products", new HashMap<String, Object>());
+            Set<ProductEntity> productEntities = purchase.getSold_products();
+            productEntities.forEach((productEntity -> {
+                Map<String, Object> subData = new HashMap<>();
+                subData.put("description", productEntity.getProduct_description());
+                subData.put("cost", productEntity.getCost());
+                subData.put("amount", productEntity.getAmount());
+                Map<String, Object> subDataMap = (Map<String, Object>) responseData.get("sold products");
+                subDataMap.put(productEntity.getId().toString(), subData);
+            }));
+            return ResponseEntity.ok(responseData);
+        }
+        catch (NoSuchElementException e) {
+            this.getLogger().warn("Purchase with id " + purchase_id + " does not exists");
+            return ResponseEntity.notFound().build();
+        }
     }
 }

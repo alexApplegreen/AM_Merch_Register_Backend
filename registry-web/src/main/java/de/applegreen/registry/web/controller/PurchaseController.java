@@ -115,6 +115,7 @@ public class PurchaseController implements HasLogger {
      * @param purchase_id Long id of the purchase inside the Database
      * @return 200 and instance of purchase if ID exists, 404 else
      */
+    @SuppressWarnings("rawtypes")
     @GetMapping("/details/{purchase_id}")
     public ResponseEntity details(@PathVariable("purchase_id") Long purchase_id) {
         Optional<PurchaseEntity> purchaseEntityOptional = this.purchaseEntityRepository.findById(purchase_id);
@@ -126,14 +127,14 @@ public class PurchaseController implements HasLogger {
             responseData.put("total cost", purchase.getTotal_cost());
             responseData.put("sold products", new HashMap<String, Object>());
             Set<ProductEntity> productEntities = purchase.getSold_products();
-            productEntities.forEach((productEntity -> {
+            productEntities.forEach(productEntity -> {
                 Map<String, Object> subData = new HashMap<>();
                 subData.put("description", productEntity.getProduct_description());
                 subData.put("cost", productEntity.getCost());
                 subData.put("amount", productEntity.getAmount());
                 Map<String, Object> subDataMap = (Map<String, Object>) responseData.get("sold products");
                 subDataMap.put(productEntity.getId().toString(), subData);
-            }));
+            });
             return ResponseEntity.ok(responseData);
         }
         catch (NoSuchElementException e) {

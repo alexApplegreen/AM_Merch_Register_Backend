@@ -115,6 +115,7 @@ public class PurchaseController implements HasLogger {
      * @param purchase_id Long id of the purchase inside the Database
      * @return 200 and instance of purchase if ID exists, 404 else
      */
+    @SuppressWarnings("rawtypes")
     @GetMapping("/details/{purchase_id}")
     public ResponseEntity details(@PathVariable("purchase_id") Long purchase_id) {
         Optional<PurchaseEntity> purchaseEntityOptional = this.purchaseEntityRepository.findById(purchase_id);

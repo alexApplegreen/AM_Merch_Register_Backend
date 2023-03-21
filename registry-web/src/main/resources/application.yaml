@@ -16,3 +16,5 @@ server:
   port: 8081
 
 application-version: @revision@
+woocommerce_api_key: ck_b599fc9815b18fd81f992bdb5e80b6672bd77df5
+woocommerce_api_secret: cs_2527eb982b6bc3826ca7c5d8414ce75921127b63

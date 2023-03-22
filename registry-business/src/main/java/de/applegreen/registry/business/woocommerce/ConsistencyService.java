@@ -2,10 +2,10 @@ package de.applegreen.registry.business.woocommerce;
 
 import de.applegreen.registry.business.datatransfer.PurchaseDTO;
 import de.applegreen.registry.business.util.HasLogger;
+import de.applegreen.registry.business.util.WooCommerceCommunicatable;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,15 +24,8 @@ import java.util.Optional;
  */
 @Aspect
 @Service
-public class ConsistencyService implements HasLogger {
+public class ConsistencyService implements HasLogger, WooCommerceCommunicatable {
 
-    @Value("${woocommerce_api_key}")
-    private String KEY;
-
-    @Value("${woocommerce_api_secret}")
-    private String SECRET;
-
-    private final static String BASE_URL = "https://aboutmonsters.de/wp-json/wc/v3";
     private final static String PRODUCTS = "/products";
     private final static String STOCK_KEY = "stock_quantity";
 
@@ -54,10 +47,15 @@ public class ConsistencyService implements HasLogger {
         }));
     }
 
+    /**
+     * Helper function to handle a purchase
+     *
+     * @param productId ID of product in woocommerce DBl
+     */
     @SuppressWarnings("rawtypes")
     private void handleStockQuantityUpdate(Long productId) {
         RestTemplate restTemplate = new RestTemplate();
-        String plainauth = this.KEY + ":" + this.SECRET;
+        String plainauth = this.API_KEY + ":" + this.API_SECRECT;
         byte[] plainAuthBytes = plainauth.getBytes();
         byte[] base64auth = Base64.getEncoder().encode(plainAuthBytes);
         HttpHeaders headers = new HttpHeaders();

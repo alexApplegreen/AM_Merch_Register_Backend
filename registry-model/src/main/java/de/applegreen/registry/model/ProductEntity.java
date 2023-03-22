@@ -19,7 +19,6 @@ public class ProductEntity {
     @Id
     @Basic
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Basic

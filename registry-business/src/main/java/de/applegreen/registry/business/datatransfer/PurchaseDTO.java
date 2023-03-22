@@ -25,6 +25,7 @@ public class PurchaseDTO {
     @NoArgsConstructor
     public static class ProductDTO {
 
+        private Long Product_id;
         private String product_description;
         private BigDecimal cost;
         private Integer amount;

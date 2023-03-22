@@ -1,7 +1,7 @@
 package de.applegreen.registry.business.woocommerce;
 
+import de.applegreen.registry.business.datatransfer.PurchaseDTO;
 import de.applegreen.registry.business.util.HasLogger;
-import de.applegreen.registry.model.ProductEntity;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -39,19 +39,23 @@ public class ConsistencyService implements HasLogger {
     /**
      * Pointcut definition and advice for when a purchase has been registered
      */
-    @SuppressWarnings("rawtypes")
     @AfterReturning(value = "@annotation(de.applegreen.registry.business.util.AdviceAnnotations.PurchaseCommit)")
     public void updateShopRegistry(JoinPoint joinPoint) {
-        // TODO passt noch nicht
-        Optional<ProductEntity> productEntityOptional = Arrays.stream(
-                (ProductEntity[]) joinPoint.getArgs()
+        Optional<PurchaseDTO> purchaseDtoOptional = Arrays.stream(
+                (PurchaseDTO[]) joinPoint.getArgs()
         ).findFirst();
-        if (productEntityOptional.isEmpty()) {
+        if (purchaseDtoOptional.isEmpty()) {
             this.getLogger().warn("No Argument present in Advice");
             return;
         }
-        ProductEntity productEntity = productEntityOptional.get();
+        PurchaseDTO purchaseDTO = purchaseDtoOptional.get();
+        purchaseDTO.getSold_products().forEach((productDTO -> {
+            this.handleStockQuantityUpdate(productDTO.getProduct_id());
+        }));
+    }
 
+    @SuppressWarnings("rawtypes")
+    private void handleStockQuantityUpdate(Long productId) {
         RestTemplate restTemplate = new RestTemplate();
         String plainauth = this.KEY + ":" + this.SECRET;
         byte[] plainAuthBytes = plainauth.getBytes();
@@ -60,7 +64,6 @@ public class ConsistencyService implements HasLogger {
         headers.add("Authorization", "Basic " + new String(base64auth));
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
 
-        Long productId = productEntity.getId();
         this.getLogger().info("Updating Stock of Product " + productId);
         ResponseEntity<Map> responsedata = restTemplate.exchange(
                 ConsistencyService.BASE_URL + ConsistencyService.PRODUCTS + productId,

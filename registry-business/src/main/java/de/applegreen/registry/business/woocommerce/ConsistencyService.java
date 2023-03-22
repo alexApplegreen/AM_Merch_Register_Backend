@@ -73,17 +73,22 @@ public class ConsistencyService implements HasLogger {
             // TODO save in database and retry exponentially
             return;
         }
-        Long quantity = (Long) responsedata.getBody().get(ConsistencyService.STOCK_KEY);
-        quantity = quantity - 1;
-        Map<String, Long> data = new HashMap<>();
-        data.put(ConsistencyService.STOCK_KEY, quantity);
-        restTemplate.exchange(
-                ConsistencyService.BASE_URL + ConsistencyService.PRODUCTS + productId,
-                HttpMethod.PUT,
-                httpEntity,
-                Map.class,
-                data
-        );
-        this.getLogger().info("Updated stock quantity in database");
+        try {
+            Long quantity = (Long) responsedata.getBody().get(ConsistencyService.STOCK_KEY);
+            quantity = quantity - 1;
+            Map<String, Long> data = new HashMap<>();
+            data.put(ConsistencyService.STOCK_KEY, quantity);
+            restTemplate.exchange(
+                    ConsistencyService.BASE_URL + ConsistencyService.PRODUCTS + productId,
+                    HttpMethod.PUT,
+                    httpEntity,
+                    Map.class,
+                    data
+            );
+            this.getLogger().info("Updated stock quantity in database");
+        }
+        catch (NullPointerException e) {
+            this.getLogger().warn("Received faulty data from Woocommerce API");
+        }
     }
 }

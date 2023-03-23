@@ -7,11 +7,5 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public interface WooCommerceCommunicatable {
 
-    @Value("${woocommerce_api_key}")
-    String API_KEY = "";
-
-    @Value("${woocommerce_api_secret}")
-    String API_SECRECT = "";
-
     String BASE_URL = "https://aboutmonsters.de/wp-json/wc/v3";
 }

@@ -6,6 +6,7 @@ import de.applegreen.registry.business.util.WooCommerceCommunicatable;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,6 +29,10 @@ public class ConsistencyService implements HasLogger, WooCommerceCommunicatable 
 
     private final static String PRODUCTS = "/products";
     private final static String STOCK_KEY = "stock_quantity";
+    @Value("${woocommerce_api_key}")
+    private String API_KEY;
+    @Value("${woocommerce_api_secret}")
+    private String API_SECRET;
 
     /**
      * Pointcut definition and advice for when a purchase has been registered
@@ -55,7 +60,7 @@ public class ConsistencyService implements HasLogger, WooCommerceCommunicatable 
     @SuppressWarnings("rawtypes")
     private void handleStockQuantityUpdate(Long productId) {
         RestTemplate restTemplate = new RestTemplate();
-        String plainauth = this.API_KEY + ":" + this.API_SECRECT;
+        String plainauth = this.API_KEY + ":" + this.API_SECRET;
         byte[] plainAuthBytes = plainauth.getBytes();
         byte[] base64auth = Base64.getEncoder().encode(plainAuthBytes);
         HttpHeaders headers = new HttpHeaders();

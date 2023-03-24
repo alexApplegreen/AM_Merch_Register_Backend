@@ -6,31 +6,27 @@ import lombok.Setter;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.math.BigDecimal;
 
+/**
+ * @author Alexander Tepe | a.tepe@kalverkamp.de
+ */
 @Entity
 @Getter
 @Setter
-public class ProductEntity {
+public class WCProductType {
 
     @Id
-    @Basic
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Basic
     private Long id;
 
+    @Column(name = "description")
     @Basic
-    @Column(name = "product_description")
-    private String product_description;
+    private String description;
 
-    @Basic
-    @Column(name = "amount")
-    private Long amount;
-
-    @Basic
     @Column(name = "cost")
+    @Basic
     private BigDecimal cost;
 }

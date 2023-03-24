@@ -2,15 +2,20 @@ package de.applegreen.registry.business.woocommerce;
 
 import de.applegreen.registry.business.util.HasLogger;
 import de.applegreen.registry.business.util.WooCommerceCommunicatable;
+import de.applegreen.registry.model.WCProductType;
+import de.applegreen.registry.persistence.repository.WCProductTypeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.Null;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +31,13 @@ public class ProductDBInitializer implements HasLogger, WooCommerceCommunicatabl
 
     @Value("${woocommerce_api_secret}")
     private String API_SECRET;
+
+    private final WCProductTypeRepository wcProductTypeRepository;
+
+    @Autowired
+    public ProductDBInitializer(WCProductTypeRepository wcProductTypeRepository) {
+        this.wcProductTypeRepository = wcProductTypeRepository;
+    }
 
     @SuppressWarnings("rawtypes")
     @PostConstruct
@@ -53,7 +65,19 @@ public class ProductDBInitializer implements HasLogger, WooCommerceCommunicatabl
             this.getLogger().warn("List of products from WooCommerce API is empty");
         }
         data.forEach((product) -> {
-            // TODO create a productType Entity and add to Database
+            try {
+                WCProductType productType = new WCProductType();
+                productType.setId((long) product.get("id"));
+                productType.setDescription(product.get("name").toString());
+                this.wcProductTypeRepository.save(productType);
+                this.getLogger().info("added producttemplate: " + product.get("name").toString());
+            }
+            catch (JpaSystemException e) {
+                this.getLogger().warn("Could not add Product " + product.get("name") + " to database");
+            }
+            catch (NullPointerException e) {
+                this.getLogger().error(e.getLocalizedMessage());
+            }
         });
     }
 }

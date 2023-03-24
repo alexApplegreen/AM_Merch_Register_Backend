@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.Null;
+import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -67,8 +67,9 @@ public class ProductDBInitializer implements HasLogger, WooCommerceCommunicatabl
         data.forEach((product) -> {
             try {
                 WCProductType productType = new WCProductType();
-                productType.setId((long) product.get("id"));
+                productType.setId(Long.valueOf(product.get("id").toString()));
                 productType.setDescription(product.get("name").toString());
+                productType.setCost(BigDecimal.valueOf(Double.parseDouble(product.get("price").toString())));
                 this.wcProductTypeRepository.save(productType);
                 this.getLogger().info("added producttemplate: " + product.get("name").toString());
             }

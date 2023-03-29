@@ -39,17 +39,14 @@ public class ConsistencyService implements HasLogger, WooCommerceCommunicatable 
      */
     @AfterReturning(value = "@annotation(de.applegreen.registry.business.util.AdviceAnnotations.PurchaseCommit)")
     public void updateShopRegistry(JoinPoint joinPoint) {
-        Optional<PurchaseDTO> purchaseDtoOptional = Arrays.stream(
-                (PurchaseDTO[]) joinPoint.getArgs()
-        ).findFirst();
-        if (purchaseDtoOptional.isEmpty()) {
-            this.getLogger().warn("No Argument present in Advice");
+        Optional<Object> arg = Arrays.stream(joinPoint.getArgs()).findFirst();
+        if (arg.isEmpty()) {
+            this.getLogger().error("Advice has no Argument");
             return;
         }
-        PurchaseDTO purchaseDTO = purchaseDtoOptional.get();
-        purchaseDTO.getSold_products().forEach((productDTO -> {
-            this.handleStockQuantityUpdate(productDTO.getProduct_id());
-        }));
+
+        PurchaseDTO purchaseDTO = (PurchaseDTO) arg.get();
+        purchaseDTO.getProduct_ids().forEach((this::handleStockQuantityUpdate));
     }
 
     /**

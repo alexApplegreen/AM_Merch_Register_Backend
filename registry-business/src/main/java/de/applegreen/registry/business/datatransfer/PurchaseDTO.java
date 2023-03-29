@@ -20,17 +20,6 @@ import java.util.Set;
 @NoArgsConstructor
 public class PurchaseDTO {
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    public static class ProductDTO {
-
-        private Long Product_id;
-        private String product_description;
-        private BigDecimal cost;
-        private Integer amount;
-    }
-
     @NotNull
     private Timestamp timestamp;
     @NotNull
@@ -38,5 +27,5 @@ public class PurchaseDTO {
     private BigDecimal total_cost;
     @NotEmpty(message = "At least one product must have been sold")
     @NotNull
-    private Set<ProductDTO> sold_products;
+    private Set<Long> product_ids;
 }

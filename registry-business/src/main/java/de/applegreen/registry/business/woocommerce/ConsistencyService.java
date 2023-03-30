@@ -64,7 +64,6 @@ public class ConsistencyService implements HasLogger, WooCommerceCommunicatable 
         headers.add("Authorization", "Basic " + new String(base64auth));
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
 
-        this.getLogger().info("Updating Stock of Product " + productId);
         String url = this.BASE_URL + ConsistencyService.PRODUCTS +  "/" + productId;
         ResponseEntity<Map> responsedata = restTemplate.exchange(
                 url,
@@ -83,14 +82,18 @@ public class ConsistencyService implements HasLogger, WooCommerceCommunicatable 
             quantity = quantity - 1;
             Map<String, Integer> data = new HashMap<>();
             data.put(ConsistencyService.STOCK_KEY, quantity);
-            restTemplate.exchange(
+            this.getLogger().info(data.toString());
+            HttpEntity<Object> postEntity = new HttpEntity<>(data, headers);
+            ResponseEntity<Map> response = restTemplate.exchange(
                     url,
-                    HttpMethod.PUT,
-                    httpEntity,
-                    Map.class,
-                    data
+                    HttpMethod.POST,
+                    postEntity,
+                    Map.class
             );
-            this.getLogger().info("Updated stock quantity in database");
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                this.getLogger().warn("Could not send Update to server");
+            }
+            this.getLogger().info("Updated stock quantity in database of product " + productId + " to " + quantity);
         }
         catch (NullPointerException e) {
             this.getLogger().warn("Received faulty data from Woocommerce API");

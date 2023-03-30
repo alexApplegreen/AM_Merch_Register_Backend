@@ -66,7 +66,6 @@ public class ConsistencyService implements HasLogger, WooCommerceCommunicatable 
 
         this.getLogger().info("Updating Stock of Product " + productId);
         String url = this.BASE_URL + ConsistencyService.PRODUCTS +  "/" + productId;
-        this.getLogger().debug(url);
         ResponseEntity<Map> responsedata = restTemplate.exchange(
                 url,
                 HttpMethod.GET,

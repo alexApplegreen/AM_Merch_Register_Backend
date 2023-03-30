@@ -2,6 +2,7 @@ package de.applegreen.registry.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.FetchProfile;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -26,7 +27,7 @@ public class PurchaseEntity {
     @Column(name = "total_cost")
     private BigDecimal total_cost;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @Column(name = "sold_products")
     private Set<WCProductType> sold_products;
 }

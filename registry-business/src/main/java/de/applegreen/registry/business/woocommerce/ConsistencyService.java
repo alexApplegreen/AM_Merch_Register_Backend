@@ -65,12 +65,15 @@ public class ConsistencyService implements HasLogger, WooCommerceCommunicatable 
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
 
         this.getLogger().info("Updating Stock of Product " + productId);
+        String url = this.BASE_URL + ConsistencyService.PRODUCTS +  "/" + productId;
+        this.getLogger().debug(url);
         ResponseEntity<Map> responsedata = restTemplate.exchange(
-                this.BASE_URL + ConsistencyService.PRODUCTS + "/" + productId,
+                url,
                 HttpMethod.GET,
                 httpEntity,
                 Map.class
         );
+
         if (!responsedata.getStatusCode().is2xxSuccessful()) {
             this.getLogger().warn("Cannot get Data from WooCommerce Server");
             // TODO save in database and retry exponentially
@@ -82,7 +85,7 @@ public class ConsistencyService implements HasLogger, WooCommerceCommunicatable 
             Map<String, Integer> data = new HashMap<>();
             data.put(ConsistencyService.STOCK_KEY, quantity);
             restTemplate.exchange(
-                    ConsistencyService.BASE_URL + ConsistencyService.PRODUCTS + productId,
+                    url,
                     HttpMethod.PUT,
                     httpEntity,
                     Map.class,

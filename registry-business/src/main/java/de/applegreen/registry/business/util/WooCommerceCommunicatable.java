@@ -3,7 +3,7 @@ package de.applegreen.registry.business.util;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- * @author Alexander Tepe | a.tepe@kalverkamp.de
+ * @author Alexander Tepe | a.tepe@hotmail.de
  */
 public interface WooCommerceCommunicatable {
 

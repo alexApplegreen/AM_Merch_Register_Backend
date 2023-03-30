@@ -4,10 +4,11 @@ import de.applegreen.registry.business.datatransfer.PurchaseDTO;
 import de.applegreen.registry.business.datatransfer.PurchaseHistoryPaginationDTO;
 import de.applegreen.registry.business.util.AdviceAnnotations;
 import de.applegreen.registry.business.util.HasLogger;
-import de.applegreen.registry.model.ProductEntity;
 import de.applegreen.registry.model.PurchaseEntity;
+import de.applegreen.registry.model.WCProductType;
 import de.applegreen.registry.persistence.repository.ProductEntityRepository;
 import de.applegreen.registry.persistence.repository.PurchaseEntityRepository;
+import de.applegreen.registry.persistence.repository.WCProductTypeRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -42,16 +43,19 @@ public class PurchaseController implements HasLogger {
     private final int PAGE_SIZE_DEFAULT = 20;
     private final PurchaseEntityRepository purchaseEntityRepository;
     private final ProductEntityRepository productEntityRepository;
+    private final WCProductTypeRepository wcProductTypeRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
     public PurchaseController(
-            PurchaseEntityRepository purchaseEntityRepository,
-            ProductEntityRepository productEntityRepository,
-            ModelMapper modelMapper
+        PurchaseEntityRepository purchaseEntityRepository,
+        ProductEntityRepository productEntityRepository,
+        WCProductTypeRepository wcProductTypeRepository,
+        ModelMapper modelMapper
     ) {
         this.purchaseEntityRepository = purchaseEntityRepository;
         this.productEntityRepository = productEntityRepository;
+        this.wcProductTypeRepository = wcProductTypeRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -97,12 +101,8 @@ public class PurchaseController implements HasLogger {
     @AdviceAnnotations.PurchaseCommit
     public ResponseEntity newPurchase(@Valid @RequestBody PurchaseDTO purchaseDTO) {
         PurchaseEntity purchaseEntity = this.modelMapper.map(purchaseDTO, PurchaseEntity.class);
-        Set<ProductEntity> transientProducts = new HashSet<>();
-        purchaseDTO.getSold_products().forEach((productDTO) -> {
-            ProductEntity productEntity = this.modelMapper.map(productDTO, ProductEntity.class);
-            transientProducts.add(productEntity);
-            this.productEntityRepository.saveAndFlush(productEntity);
-        });
+        Set<WCProductType> transientProducts = new HashSet<>();
+        // TODO find all productTemplates by ID and add to Transientproducts
         purchaseEntity.setSold_products(transientProducts);
         this.purchaseEntityRepository.save(purchaseEntity);
         this.getLogger().info("New Purchase about " + purchaseDTO.getTotal_cost().toString() + "€");
@@ -126,15 +126,14 @@ public class PurchaseController implements HasLogger {
             responseData.put("timestamp", purchase.getTimestamp());
             responseData.put("total cost", purchase.getTotal_cost());
             responseData.put("sold products", new HashMap<String, Object>());
-            Set<ProductEntity> productEntities = purchase.getSold_products();
-            productEntities.forEach((productEntity -> {
+            Set<WCProductType> productTypeSet = purchase.getSold_products();
+            productTypeSet.forEach(productType -> {
                 Map<String, Object> subData = new HashMap<>();
-                subData.put("description", productEntity.getProduct_description());
-                subData.put("cost", productEntity.getCost());
-                subData.put("amount", productEntity.getAmount());
+                subData.put("description", productType.getDescription());
+                subData.put("cost", productType.getCost());
                 Map<String, Object> subDataMap = (Map<String, Object>) responseData.get("sold products");
-                subDataMap.put(productEntity.getId().toString(), subData);
-            }));
+                subDataMap.put(productType.getId().toString(), subData);
+            });
             return ResponseEntity.ok(responseData);
         }
         catch (NoSuchElementException e) {

@@ -66,7 +66,7 @@ public class ConsistencyService implements HasLogger, WooCommerceCommunicatable 
 
         this.getLogger().info("Updating Stock of Product " + productId);
         ResponseEntity<Map> responsedata = restTemplate.exchange(
-                ConsistencyService.BASE_URL + ConsistencyService.PRODUCTS + productId,
+                this.BASE_URL + ConsistencyService.PRODUCTS + "/" + productId,
                 HttpMethod.GET,
                 httpEntity,
                 Map.class
@@ -77,9 +77,9 @@ public class ConsistencyService implements HasLogger, WooCommerceCommunicatable 
             return;
         }
         try {
-            Long quantity = (Long) responsedata.getBody().get(ConsistencyService.STOCK_KEY);
+            Integer quantity = (Integer) responsedata.getBody().get(ConsistencyService.STOCK_KEY);
             quantity = quantity - 1;
-            Map<String, Long> data = new HashMap<>();
+            Map<String, Integer> data = new HashMap<>();
             data.put(ConsistencyService.STOCK_KEY, quantity);
             restTemplate.exchange(
                     ConsistencyService.BASE_URL + ConsistencyService.PRODUCTS + productId,

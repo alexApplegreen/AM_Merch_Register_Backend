@@ -29,6 +29,7 @@ public class ConsistencyService implements HasLogger, WooCommerceCommunicatable 
 
     private final static String PRODUCTS = "/products";
     private final static String STOCK_KEY = "stock_quantity";
+    
     @Value("${woocommerce_api_key}")
     private String API_KEY;
     @Value("${woocommerce_api_secret}")

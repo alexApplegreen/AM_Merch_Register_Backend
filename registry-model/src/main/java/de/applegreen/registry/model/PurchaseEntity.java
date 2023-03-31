@@ -29,5 +29,5 @@ public class PurchaseEntity {
 
     @OneToMany(fetch = FetchType.EAGER)
     @Column(name = "sold_products")
-    private Set<WCProductType> sold_products;
+    private Set<ProductEntity> sold_products;
 }

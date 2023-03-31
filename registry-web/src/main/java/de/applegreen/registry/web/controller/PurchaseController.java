@@ -4,6 +4,7 @@ import de.applegreen.registry.business.datatransfer.PurchaseDTO;
 import de.applegreen.registry.business.datatransfer.PurchaseHistoryPaginationDTO;
 import de.applegreen.registry.business.util.AdviceAnnotations;
 import de.applegreen.registry.business.util.HasLogger;
+import de.applegreen.registry.model.ProductEntity;
 import de.applegreen.registry.model.PurchaseEntity;
 import de.applegreen.registry.model.WCProductType;
 import de.applegreen.registry.persistence.repository.ProductEntityRepository;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -101,12 +104,29 @@ public class PurchaseController implements HasLogger {
     @AdviceAnnotations.PurchaseCommit
     public ResponseEntity newPurchase(@Valid @RequestBody PurchaseDTO purchaseDTO) {
         PurchaseEntity purchaseEntity = this.modelMapper.map(purchaseDTO, PurchaseEntity.class);
-        Set<WCProductType> transientProducts = new HashSet<>();
-        // TODO find all productTemplates by ID and add to Transientproducts
+        Set<ProductEntity> transientProducts = this.getWcProductTypes(purchaseDTO);
         purchaseEntity.setSold_products(transientProducts);
         this.purchaseEntityRepository.save(purchaseEntity);
         this.getLogger().info("New Purchase about " + purchaseDTO.getTotal_cost().toString() + "€");
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Extract Set of transient products which were sold in a purchase.
+     * @return a set of {@link WCProductType}
+     */
+    private Set<WCProductType> getWcProductTypes(PurchaseDTO purchaseDTO) {
+        Set<WCProductType> transientProducts = new HashSet<>();
+        @NotEmpty(message = "At least one product must have been sold")
+        @NotNull Set<Long> procudctIDs = purchaseDTO.getProduct_ids();
+        procudctIDs.forEach((productId) -> {
+            Optional<WCProductType> wcProductTypeOptional = this.wcProductTypeRepository.findByWc_id(productId);
+            wcProductTypeOptional.ifPresentOrElse(
+                    transientProducts::add,
+                    () -> this.getLogger().warn("Product " + productId + " does not exist")
+            );
+        });
+        return transientProducts;
     }
 
     /**
@@ -125,15 +145,8 @@ public class PurchaseController implements HasLogger {
             responseData.put("id", purchase.getId());
             responseData.put("timestamp", purchase.getTimestamp());
             responseData.put("total cost", purchase.getTotal_cost());
-            responseData.put("sold products", new HashMap<String, Object>());
-            Set<WCProductType> productTypeSet = purchase.getSold_products();
-            productTypeSet.forEach(productType -> {
-                Map<String, Object> subData = new HashMap<>();
-                subData.put("description", productType.getDescription());
-                subData.put("cost", productType.getCost());
-                Map<String, Object> subDataMap = (Map<String, Object>) responseData.get("sold products");
-                subDataMap.put(productType.getId().toString(), subData);
-            });
+            Set<ProductEntity> productSet = purchase.getSold_products();
+            responseData.put("sold products", productSet);
             return ResponseEntity.ok(responseData);
         }
         catch (NoSuchElementException e) {

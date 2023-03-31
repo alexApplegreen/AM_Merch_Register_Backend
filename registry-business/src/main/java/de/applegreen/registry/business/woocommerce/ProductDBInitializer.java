@@ -67,7 +67,7 @@ public class ProductDBInitializer implements HasLogger, WooCommerceCommunicatabl
         data.forEach((product) -> {
             try {
                 WCProductType productType = new WCProductType();
-                productType.setId(Long.valueOf(product.get("id").toString()));
+                productType.setWc_id(Long.valueOf(product.get("id").toString()));
                 productType.setDescription(product.get("name").toString());
                 productType.setCost(BigDecimal.valueOf(Double.parseDouble(product.get("price").toString())));
                 this.wcProductTypeRepository.save(productType);

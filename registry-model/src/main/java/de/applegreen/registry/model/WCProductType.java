@@ -1,12 +1,10 @@
 package de.applegreen.registry.model;
 
+import lombok.Generated;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 /**
@@ -18,9 +16,14 @@ import java.math.BigDecimal;
 public class WCProductType {
 
     @Id
-    @Column(name = "id")
     @Basic
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(name = "wc_id")
+    @Basic
+    private Long wc_id;
 
     @Column(name = "description")
     @Basic

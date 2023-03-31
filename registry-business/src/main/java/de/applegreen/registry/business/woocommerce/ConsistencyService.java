@@ -83,7 +83,6 @@ public class ConsistencyService implements HasLogger, WooCommerceCommunicatable 
             quantity = quantity - 1;
             Map<String, Integer> data = new HashMap<>();
             data.put(ConsistencyService.STOCK_KEY, quantity);
-            this.getLogger().info(data.toString());
             HttpEntity<Object> postEntity = new HttpEntity<>(data, headers);
             ResponseEntity<Map> response = restTemplate.exchange(
                     url,

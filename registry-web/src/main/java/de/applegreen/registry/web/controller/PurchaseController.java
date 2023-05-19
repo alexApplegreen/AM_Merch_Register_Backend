@@ -113,10 +113,10 @@ public class PurchaseController implements HasLogger {
 
     /**
      * Extract Set of transient products which were sold in a purchase.
-     * @return a set of {@link WCProductType}
+     * @return a set of {@link ProductEntity}
      */
-    private Set<WCProductType> getWcProductTypes(PurchaseDTO purchaseDTO) {
-        Set<WCProductType> transientProducts = new HashSet<>();
+    private Set<ProductEntity> getWcProductTypes(PurchaseDTO purchaseDTO) {
+        Set<ProductEntity> transientProducts = new HashSet<>();
         @NotEmpty(message = "At least one product must have been sold")
         @NotNull Set<Long> procudctIDs = purchaseDTO.getProduct_ids();
         procudctIDs.forEach((productId) -> {

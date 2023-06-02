@@ -18,7 +18,7 @@ public class InfoController {
     private String applicationVersion;
 
     @GetMapping("/info")
-    public ResponseEntity info() {
+    public ResponseEntity<Map<String, String>> info() {
         Map<String, String> data = new HashMap<>();
         data.put("application-name", "AM Registry Backend");
         data.put("application-version", this.applicationVersion);
